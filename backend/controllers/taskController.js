@@ -1,4 +1,4 @@
-const TaskModel = require("../models/taskModel");
+const TaskModel = require("../models/taskmodel");
 const ProjectModel = require("../models/projectModel");
 
 // @desc    Create a new task
