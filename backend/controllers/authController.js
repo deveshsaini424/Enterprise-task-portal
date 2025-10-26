@@ -6,10 +6,13 @@ const bcrypt = require('bcryptjs');
 
 const googleLogin = async (req, res) => {
     try {
-        // ✅ CHANGE FROM req.query TO req.body
-        const { code } = req.body;
+        // Support both GET (from redirect) and POST (from frontend)
+        const code = req.body.code || req.query.code;
         
-        // ✅ SET REDIRECT URI TO 'postmessage' for @react-oauth/google
+        if (!code) {
+            return res.status(400).json({ message: "No authorization code provided" });
+        }
+        
         const googleRes = await oauth2client.getToken({
             code,
             redirect_uri: 'postmessage'

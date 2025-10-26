@@ -6,6 +6,8 @@ router.get('/test', (req, res) => {
     res.send("test pass");
 });
 
+// Support both GET and POST for Google OAuth
+router.get('/google', googleLogin);
 router.post('/google', googleLogin);
 
 router.post('/register', registerLocal);
