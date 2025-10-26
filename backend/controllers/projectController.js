@@ -1,5 +1,5 @@
 const ProjectModel = require('../models/projectModel');
-const TaskModel = require('../models/taskModel'); // Verify filename is exactly taskModel.js
+const TaskModel = require('../models/taskmodel'); // Verify filename is exactly taskModel.js
 const UserModel = require('../models/userModel'); // Verify filename is exactly userModel.js
 
 // Helper function for user details in response
