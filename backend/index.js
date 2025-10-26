@@ -13,10 +13,11 @@ const userRouter = require('./routes/userRoutes');
 const projectRouter = require('./routes/projectRoutes');
 const taskRouter = require('./routes/taskRoutes');
 
-// --- CORS CONFIGURATION USING ENV VARIABLE ---
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:5173'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://enterprise-portal-frontend-one.vercel.app'
+];
 
 app.use(cors({
   origin: function (origin, callback) {
