@@ -6,23 +6,26 @@ const bcrypt = require('bcryptjs');
 
 const googleLogin = async (req, res) => {
     try {
-        // Support both GET (from redirect) and POST (from frontend)
         const code = req.body.code || req.query.code;
         
         if (!code) {
             return res.status(400).json({ message: "No authorization code provided" });
         }
         
-        const googleRes = await oauth2client.getToken({
-            code,
-            redirect_uri: 'postmessage'
-        });
+        console.log('Received code:', code);
+        
+        // Don't specify redirect_uri in getToken, it will use the one from oauth2client
+        const googleRes = await oauth2client.getToken(code);
+        
+        console.log('Got tokens:', googleRes.tokens);
         
         oauth2client.setCredentials(googleRes.tokens);
 
         const userRes = await axios.get(
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
         );
+
+        console.log('Got user data:', userRes.data);
 
         const { email, name, picture } = userRes.data;
         let user = await UserModel.findOne({ email });
@@ -49,9 +52,11 @@ const googleLogin = async (req, res) => {
         });
     } catch (err) {
         console.error('Google Login Error:', err);
+        console.error('Error details:', err.response?.data || err.message);
         res.status(500).json({
             message: "Internal server error",
-            error: err.message
+            error: err.message,
+            details: err.response?.data
         });
     }
 };
