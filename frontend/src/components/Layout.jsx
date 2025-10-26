@@ -1,8 +1,8 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom'; // <-- Import Outlet
-import { useAuth } from '../context/AuthContext'; // <-- Simplified Path
-import Sidebar from './Sidebar'; // <-- Removed .jsx
-import { Loader2 } from 'lucide-react';
+import React from "react";
+import { Outlet } from "react-router-dom"; // <-- Import Outlet
+import { useAuth } from "../context/AuthContext"; // <-- Simplified Path
+import Sidebar from "./Sidebar"; // <-- Removed .jsx
+import { Loader2 } from "lucide-react";
 
 const Layout = () => {
   const { user, logout, loading } = useAuth();
@@ -22,12 +22,11 @@ const Layout = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        
         {/* Top Header Bar */}
         <header className="bg-white shadow-sm z-10 p-4">
           <div className="flex justify-end items-center">
             <span className="text-sm font-medium text-gray-700 mr-4">
-              Welcome, {user?.name || 'User'}
+              Welcome, {user?.name || "User"}
             </span>
             <button
               onClick={logout}
@@ -50,4 +49,3 @@ const Layout = () => {
 };
 
 export default Layout;
-

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext'; // Removed .jsx
-import { Loader2 } from 'lucide-react';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext"; // Removed .jsx
+import { Loader2 } from "lucide-react";
 
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -16,7 +16,7 @@ const AdminRoute = ({ children }) => {
   }
 
   // Check if user exists and if their role is 'admin'
-  if (user && user.role === 'admin') {
+  if (user && user.role === "admin") {
     // If admin, render the children (e.g., the AdminPage)
     return children;
   } else {
@@ -27,4 +27,3 @@ const AdminRoute = ({ children }) => {
 };
 
 export default AdminRoute;
-

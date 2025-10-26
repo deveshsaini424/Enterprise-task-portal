@@ -1,30 +1,44 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // <-- Removed .jsx
-import { X, Loader2, Trash2, Calendar, User, Tag, AlignLeft } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // <-- Removed .jsx
+import {
+  X,
+  Loader2,
+  Trash2,
+  Calendar,
+  User,
+  Tag,
+  AlignLeft,
+} from "lucide-react";
 
-const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelete }) => {
+const TaskDetailModal = ({
+  task,
+  projectTeam,
+  onClose,
+  onTaskUpdate,
+  onTaskDelete,
+}) => {
   const { api } = useAuth();
   const [formData, setFormData] = useState({
     title: task.title,
-    description: task.description || '',
-    assignee: task.assignee?._id || '',
+    description: task.description || "",
+    assignee: task.assignee?._id || "",
     priority: task.priority,
     status: task.status,
-    deadline: task.deadline ? task.deadline.split('T')[0] : '', // Format for date input
+    deadline: task.deadline ? task.deadline.split("T")[0] : "", // Format for date input
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     if (!formData.title) {
-      setError('Title is required.');
+      setError("Title is required.");
       return;
     }
     setLoading(true);
@@ -36,16 +50,16 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
         assignee: formData.assignee || null,
         deadline: formData.deadline || null,
       };
-      
+
       // Call the UPDATE API
       const { data } = await api.put(`/api/tasks/${task._id}`, payload);
-      
+
       // Find the assignee object to pass back
-      const updatedAssignee = projectTeam.find(m => m._id === data.assignee);
+      const updatedAssignee = projectTeam.find((m) => m._id === data.assignee);
       onTaskUpdate({ ...data, assignee: updatedAssignee });
       onClose();
     } catch (err) {
-      setError('Failed to update task.');
+      setError("Failed to update task.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -53,7 +67,7 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
+    if (window.confirm("Are you sure you want to delete this task?")) {
       setLoading(true);
       setError(null);
       try {
@@ -62,14 +76,14 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
         onTaskDelete(task._id); // Pass the ID of the deleted task
         onClose();
       } catch (err) {
-        setError('Failed to delete task.');
+        setError("Failed to delete task.");
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
   };
-  
+
   const handleModalContentClick = (e) => {
     e.stopPropagation();
   };
@@ -90,7 +104,9 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
           <div className="flex justify-between items-center mb-6">
             {/* Title Input */}
             <div className="flex-1 mr-4">
-              <label htmlFor="title" className="sr-only">Title</label>
+              <label htmlFor="title" className="sr-only">
+                Title
+              </label>
               <input
                 type="text"
                 id="title"
@@ -112,7 +128,10 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+            <label
+              htmlFor="description"
+              className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
+            >
               <AlignLeft size={16} /> Description
             </label>
             <textarea
@@ -130,7 +149,10 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Status */}
             <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Status
               </label>
               <select
@@ -145,10 +167,13 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
                 <option value="Done">Done</option>
               </select>
             </div>
-            
+
             {/* Priority */}
             <div>
-              <label htmlFor="priority" className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <label
+                htmlFor="priority"
+                className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
+              >
                 <Tag size={16} /> Priority
               </label>
               <select
@@ -163,10 +188,13 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
                 <option value="High">High</option>
               </select>
             </div>
-            
+
             {/* Assignee */}
             <div>
-              <label htmlFor="assignee" className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <label
+                htmlFor="assignee"
+                className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
+              >
                 <User size={16} /> Assignee
               </label>
               <select
@@ -177,7 +205,7 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Unassigned</option>
-                {projectTeam.map(member => (
+                {projectTeam.map((member) => (
                   <option key={member._id} value={member._id}>
                     {member.name}
                   </option>
@@ -187,7 +215,10 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
 
             {/* Deadline */}
             <div>
-              <label htmlFor="deadline" className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <label
+                htmlFor="deadline"
+                className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
+              >
                 <Calendar size={16} /> Deadline
               </label>
               <input
@@ -201,9 +232,7 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
             </div>
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           {/* Action Buttons */}
           <div className="flex justify-between items-center pt-4">
@@ -213,7 +242,11 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
               disabled={loading}
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold text-red-600 bg-red-100 rounded-lg hover:bg-red-200"
             >
-              {loading ? <Loader2 className="animate-spin" /> : <Trash2 size={18} />}
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Trash2 size={18} />
+              )}
               Delete Task
             </button>
             <div className="flex gap-4">
@@ -230,7 +263,11 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
                 disabled={loading}
                 className="flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md"
               >
-                {loading ? <Loader2 className="animate-spin" /> : 'Save Changes'}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </div>
@@ -241,4 +278,3 @@ const TaskDetailModal = ({ task, projectTeam, onClose, onTaskUpdate, onTaskDelet
 };
 
 export default TaskDetailModal;
-

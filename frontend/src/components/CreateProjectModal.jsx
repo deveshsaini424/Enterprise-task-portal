@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // Corrected import path
-import { X, Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Corrected import path
+import { X, Loader2 } from "lucide-react";
 
 const CreateProjectModal = ({ onClose, onProjectCreated }) => {
   const { api } = useAuth();
-  const [projectName, setProjectName] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [projectName, setProjectName] = useState("");
+  const [description, setDescription] = useState("");
+  const [deadline, setDeadline] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!projectName) {
-      setError('Project name is required.');
+      setError("Project name is required.");
       return;
     }
     setLoading(true);
@@ -25,12 +25,12 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
         deadline: deadline || null,
       };
       // This calls our backend API
-      const { data } = await api.post('/api/projects', payload);
-      
+      const { data } = await api.post("/api/projects", payload);
+
       onProjectCreated(data); // Pass the new project back to the list
       onClose(); // Close the modal
     } catch (err) {
-      setError('Failed to create project. Please try again.');
+      setError("Failed to create project. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -62,11 +62,14 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
             <X size={28} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Project Name */}
           <div>
-            <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="projectName"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Project Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -78,10 +81,13 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
               placeholder="e.g., Q4 Marketing Campaign"
             />
           </div>
-          
+
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Description
             </label>
             <textarea
@@ -96,7 +102,10 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
 
           {/* Deadline */}
           <div>
-            <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Deadline (Optional)
             </label>
             <input
@@ -108,9 +117,7 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 pt-4">
@@ -127,7 +134,11 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
               disabled={loading}
               className="flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md"
             >
-              {loading ? <Loader2 className="animate-spin" /> : 'Create Project'}
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Create Project"
+              )}
             </button>
           </div>
         </form>
@@ -137,4 +148,3 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
 };
 
 export default CreateProjectModal;
-

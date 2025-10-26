@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // Added .jsx
-import { X, Loader2, Plus } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Added .jsx
+import { X, Loader2, Plus } from "lucide-react";
 
 const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
   const { api } = useAuth();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [assignee, setAssignee] = useState('');
-  const [priority, setPriority] = useState('Medium');
-  const [deadline, setDeadline] = useState('');
-  
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [assignee, setAssignee] = useState("");
+  const [priority, setPriority] = useState("Medium");
+  const [deadline, setDeadline] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title) {
-      setError('Title is required.');
+      setError("Title is required.");
       return;
     }
     setLoading(true);
@@ -33,15 +33,18 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
         deadline: deadline || null,
       };
 
-      const { data } = await api.post('/api/tasks', payload);
-      
+      const { data } = await api.post("/api/tasks", payload);
+
       // We need to get the populated assignee data
-      const newTask = { ...data, assignee: project.team.find(m => m._id === data.assignee) };
+      const newTask = {
+        ...data,
+        assignee: project.team.find((m) => m._id === data.assignee),
+      };
 
       onTaskCreated(newTask); // Pass the new task back to the page
       onClose(); // Close the modal
     } catch (err) {
-      setError('Failed to create task. Please try again.');
+      setError("Failed to create task. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -72,11 +75,14 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
             <X size={28} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -88,10 +94,13 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
               placeholder="e.g., Design new homepage"
             />
           </div>
-          
+
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Description
             </label>
             <textarea
@@ -107,7 +116,10 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Assignee */}
             <div>
-              <label htmlFor="assignee" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="assignee"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Assignee
               </label>
               <select
@@ -117,7 +129,7 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Unassigned</option>
-                {project.team.map(member => (
+                {project.team.map((member) => (
                   <option key={member._id} value={member._id}>
                     {member.name}
                   </option>
@@ -127,7 +139,10 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
 
             {/* Priority */}
             <div>
-              <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="priority"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Priority
               </label>
               <select
@@ -145,7 +160,10 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
 
           {/* Deadline */}
           <div>
-            <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Deadline (Optional)
             </label>
             <input
@@ -157,9 +175,7 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 pt-4">
@@ -176,7 +192,7 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
               disabled={loading}
               className="flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md"
             >
-              {loading ? <Loader2 className="animate-spin" /> : 'Create Task'}
+              {loading ? <Loader2 className="animate-spin" /> : "Create Task"}
             </button>
           </div>
         </form>
@@ -186,4 +202,3 @@ const CreateTaskModal = ({ project, status, onClose, onTaskCreated }) => {
 };
 
 export default CreateTaskModal;
-

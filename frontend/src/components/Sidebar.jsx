@@ -66,9 +66,7 @@ const Sidebar = () => {
   return (
     <div className="w-64 bg-indigo-800 text-white flex-col p-4 hidden md:flex">
       {/* Hidden on mobile, flex on medium and up */}
-      <div className="text-2xl font-bold mb-10 text-center">
-        TaskPortal
-      </div>
+      <div className="text-2xl font-bold mb-10 text-center">TaskPortal</div>
       <nav className="flex-1 flex flex-col space-y-2">
         <NavLink to="/app/dashboard" className={getNavLinkClass}>
           <DashboardIcon />
@@ -96,4 +94,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

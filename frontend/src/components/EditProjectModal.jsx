@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // Removed .jsx
-import { X, Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Removed .jsx
+import { X, Loader2 } from "lucide-react";
 
 const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
   const { api } = useAuth();
   const [formData, setFormData] = useState({
     name: project.name,
-    description: project.description || '',
-    deadline: project.deadline ? project.deadline.split('T')[0] : '', // Format for date input
+    description: project.description || "",
+    deadline: project.deadline ? project.deadline.split("T")[0] : "", // Format for date input
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name) {
-      setError('Project name is required.');
+      setError("Project name is required.");
       return;
     }
     setLoading(true);
@@ -32,14 +32,14 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
         description: formData.description,
         deadline: formData.deadline || null,
       };
-      
+
       // Call the UPDATE API
       const { data } = await api.put(`/api/projects/${project._id}`, payload);
-      
+
       onProjectUpdate(data); // Pass the updated project back
       onClose(); // Close the modal
     } catch (err) {
-      setError('Failed to update project. Please try again.');
+      setError("Failed to update project. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -70,11 +70,14 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
             <X size={28} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Project Name */}
           <div>
-            <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="projectName"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Project Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -86,10 +89,13 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Description
             </label>
             <textarea
@@ -104,7 +110,10 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
 
           {/* Deadline */}
           <div>
-            <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Deadline (Optional)
             </label>
             <input
@@ -117,9 +126,7 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 pt-4">
@@ -136,7 +143,7 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
               disabled={loading}
               className="flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md"
             >
-              {loading ? <Loader2 className="animate-spin" /> : 'Save Changes'}
+              {loading ? <Loader2 className="animate-spin" /> : "Save Changes"}
             </button>
           </div>
         </form>
@@ -146,4 +153,3 @@ const EditProjectModal = ({ project, onClose, onProjectUpdate }) => {
 };
 
 export default EditProjectModal;
-

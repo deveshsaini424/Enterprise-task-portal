@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext'; // Corrected path
-import { X, Loader2, UserPlus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext"; // Corrected path
+import { X, Loader2, UserPlus, Trash2 } from "lucide-react";
 
 const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
   const { api } = useAuth();
   const [allUsers, setAllUsers] = useState([]);
   const [team, setTeam] = useState(project.team || []);
-  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUser, setSelectedUser] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -14,11 +14,11 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data } = await api.get('/api/users');
+        const { data } = await api.get("/api/users");
         setAllUsers(data);
       } catch (err) {
-        console.error('Failed to fetch users', err);
-        setError('Could not load user list.');
+        console.error("Failed to fetch users", err);
+        setError("Could not load user list.");
       }
     };
     fetchUsers();
@@ -27,21 +27,20 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
   // Handle adding a user
   const handleAddUser = async () => {
     if (!selectedUser) {
-      setError('Please select a user to add.');
+      setError("Please select a user to add.");
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.put(
-        `/api/projects/${project._id}/team/add`,
-        { userId: selectedUser }
-      );
+      const { data } = await api.put(`/api/projects/${project._id}/team/add`, {
+        userId: selectedUser,
+      });
       setTeam(data.team); // Update local team state
       onTeamUpdate(data.team); // Update parent component
-      setSelectedUser(''); // Reset dropdown
+      setSelectedUser(""); // Reset dropdown
     } catch (err) {
-      setError('Failed to add user. They may already be on the team.');
+      setError("Failed to add user. They may already be on the team.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,7 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
       setTeam(data.team);
       onTeamUpdate(data.team);
     } catch (err) {
-      setError('Failed to remove user.');
+      setError("Failed to remove user.");
     } finally {
       setLoading(false);
     }
@@ -98,7 +97,10 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
 
         {/* Add User Form */}
         <div className="mb-6">
-          <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="userSelect"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Add Team Member
           </label>
           <div className="flex gap-2">
@@ -120,14 +122,16 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
               disabled={loading}
               className="flex items-center justify-center px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-md"
             >
-              {loading ? <Loader2 className="animate-spin" /> : <UserPlus size={20} />}
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <UserPlus size={20} />
+              )}
             </button>
           </div>
         </div>
 
-        {error && (
-          <p className="text-sm text-red-600 mb-4">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
         {/* Current Team List */}
         <div>
@@ -139,8 +143,11 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
               >
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={member.image || `https://placehold.co/40x40/E2E8F0/4A5568?text=${member.name[0]}`} 
+                  <img
+                    src={
+                      member.image ||
+                      `https://placehold.co/40x40/E2E8F0/4A5568?text=${member.name[0]}`
+                    }
                     alt={member.name}
                     className="w-10 h-10 rounded-full"
                   />
@@ -169,4 +176,3 @@ const ManageTeamModal = ({ project, onClose, onTeamUpdate }) => {
 };
 
 export default ManageTeamModal;
-

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { useAuth } from '../context/AuthContext'; // Removed .jsx
+import { useAuth } from '../context/AuthContext';
 import { Send, Loader2 } from 'lucide-react';
 
-// Connect to your backend socket server
-const socket = io('http://localhost:8080');
+// Get the backend URL from the environment variable
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'; 
+const socket = io(SOCKET_URL); 
+
 
 // Helper to get initials for avatar fallback
 const getInitials = (name = '??') => {
@@ -20,7 +22,7 @@ const ChatPanel = ({ projectId }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const messagesEndRef = useRef(null); // To auto-scroll to bottom
+  const messagesEndRef = useRef(null); 
 
   // Auto-scroll logic
   const scrollToBottom = () => {
@@ -29,14 +31,11 @@ const ChatPanel = ({ projectId }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]); // Scroll whenever messages change
+  }, [messages]); 
 
   useEffect(() => {
-    console.log(`[EFFECT] Running ChatPanel useEffect for projectId: ${projectId}`); 
-
     const handleConnect = () => {
       setIsConnected(true);
-      console.log('Socket connected');
       if (projectId) { 
           socket.emit('joinRoom', projectId);
       } else {
@@ -46,41 +45,37 @@ const ChatPanel = ({ projectId }) => {
 
     const handleDisconnect = () => {
       setIsConnected(false);
-      console.log('Socket disconnected');
     };
 
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
 
     const messageListener = (data) => {
-      console.log("[FRONTEND] Received message:", data); 
       setMessages((prevMessages) => [...prevMessages, data]);
     };
     socket.on('receiveMessage', messageListener);
 
     return () => {
-      console.log(`[EFFECT] Cleaning up ChatPanel useEffect for projectId: ${projectId}`); 
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('receiveMessage', messageListener);
     };
-  }, [projectId]); // Dependency array includes projectId
+  }, [projectId]); 
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message.trim() && user && isConnected) { 
       const messageData = {
         projectId,
-        // Include user image if available, for potential avatar display
         author: { 
             name: user.name || 'Unknown User', 
-            image: user.image 
+            image: user.image,
+            _id: user._id // Include ID for accurate comparison
         }, 
         message: message.trim(), 
         timestamp: new Date().toISOString(),
       };
       
-      console.log("[FRONTEND] Emitting sendMessage with data:", messageData); 
       socket.emit('sendMessage', messageData);
       setMessage(''); 
     } else {
@@ -101,12 +96,13 @@ const ChatPanel = ({ projectId }) => {
       </div>
 
       {/* Message Area Styling */}
-      <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar"> {/* Added custom-scrollbar class if needed */}
+      <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar"> 
         {messages.map((msg, index) => {
           // Check using user ID for reliability if available, fallback to name
-          const isMe = user && (msg.author._id === user._id || msg.author.name === user.name); 
-          const authorName = msg.author?.name || 'System';
-          const authorImage = msg.author?.image;
+          const authorExists = msg && msg.author;
+          const isMe = user && authorExists && (msg.author._id === user._id || msg.author.name === user.name); 
+          const authorName = authorExists ? msg.author.name : 'System';
+          const authorImage = authorExists ? msg.author.image : null;
           
           return (
             <div 
@@ -117,7 +113,15 @@ const ChatPanel = ({ projectId }) => {
               {!isMe && (
                 <div className="shrink-0 w-8 h-8 rounded-full bg-gray-200 overflow-hidden self-start">
                   {authorImage ? (
-                    <img src={authorImage} alt={authorName} className="w-full h-full object-cover" onError={(e) => e.target.style.display='none'}/> // Handle image errors
+                    <img 
+                      src={authorImage} 
+                      alt={authorName} 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src=`https://placehold.co/32x32/E2E8F0/4A5568?text=${getInitials(authorName)}`;
+                      }}
+                    /> 
                   ) : (
                     <span className="flex items-center justify-center w-full h-full text-xs font-bold text-gray-600">
                       {getInitials(authorName)}
@@ -134,7 +138,7 @@ const ChatPanel = ({ projectId }) => {
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
                   }`}
               >
-                {!isMe && (
+                {!isMe && authorExists && ( 
                   <p className="text-xs font-bold text-blue-500 mb-1">{authorName}</p> 
                 )}
                 <p className="text-sm">{msg.message}</p>
@@ -178,22 +182,4 @@ const ChatPanel = ({ projectId }) => {
   );
 };
 
-// Optional: Add custom scrollbar styles if needed (in your main CSS or style tag)
-/* .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1; 
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0; 
-}
-*/
-
 export default ChatPanel;
-
