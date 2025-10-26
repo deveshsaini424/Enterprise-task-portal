@@ -1,6 +1,6 @@
 const ProjectModel = require('../models/projectModel');
-const TaskModel = require('../models/taskModel'); // Needed for deletion cascade
-const UserModel = require('../models/userModel'); // Needed for team management
+const TaskModel = require('../models/taskModel'); // Verify filename is exactly taskModel.js
+const UserModel = require('../models/userModel'); // Verify filename is exactly userModel.js
 
 // Helper function for user details in response
 const populateTeam = 'team creator'; // Fields to populate
@@ -133,7 +133,7 @@ const deleteProject = async (req, res) => {
         console.log("[BACKEND] Is Creator Check (.equals):", isCreator);
         // --- END DEBUG LOGS ---
 
-        // --- THE IF STATEMENT (Should be fine now) ---
+        // --- THE IF STATEMENT ---
         if (!isCreator && !isAdmin) {
             return res.status(403).json({ message: 'Only the project creator or admin can delete this project' });
         }
@@ -146,7 +146,7 @@ const deleteProject = async (req, res) => {
         
         res.status(200).json({ message: 'Project and associated tasks deleted successfully' });
     } catch (error) {
-        console.error("Error during project deletion:", error); // Added more context to error log
+        console.error("Error during project deletion:", error); 
         res.status(500).json({ message: 'Server Error during project deletion' });
     }
 }; // <-- END OF deleteProject FUNCTION
@@ -220,8 +220,7 @@ const removeTeamMember = async (req, res) => {
             return res.status(403).json({ message: 'Only an admin can remove the project creator' });
         }
         
-        // Prevent user from removing themselves (unless they are also creator/admin doing it?)
-        // Let's assume users cannot remove themselves for now.
+        // Prevent user from removing themselves
         if (req.user._id.equals(userId)) {
              return res.status(403).json({ message: 'You cannot remove yourself from the team.' });
         }
