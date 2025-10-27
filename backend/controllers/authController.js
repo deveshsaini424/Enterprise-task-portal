@@ -42,7 +42,7 @@ const googleLogin = async (req, res) => {
         const token = jwt.sign(
             { _id, email, role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_TIMEOUT }
+            { expiresIn: process.env.JWT_TIMEOUT || '12h' }
         );
         
         return res.status(200).json({
@@ -87,7 +87,7 @@ const registerLocal = async (req, res) => {
         const token = jwt.sign(
             { _id, email, role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_TIMEOUT }
+            { expiresIn: process.env.JWT_TIMEOUT || '12h' }
         );
 
         res.status(201).json({
@@ -128,7 +128,7 @@ const loginLocal = async (req, res) => {
         const token = jwt.sign(
             { _id, email, role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_TIMEOUT }
+            { expiresIn: process.env.JWT_TIMEOUT || '12h' }
         );
 
         res.status(200).json({
