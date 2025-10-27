@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios"; // We can just use axios directly
+import axios from "axios";
 
 const AuthContext = createContext(null);
 
-// Create a re-usable axios instance
+// Use environment variable for API URL
 const api = axios.create({
-  baseURL: "http://localhost:8080", // Your backend URL
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080",
 });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token")); // Only store the token
-  const [loading, setLoading] = useState(true); // Start as true
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -20,38 +20,46 @@ export const AuthProvider = ({ children }) => {
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         try {
-          // Fetch user profile using the new /me route
           const { data } = await api.get("/api/users/me");
-          setUser(data); // Set the user from the API response
+          setUser(data);
         } catch (err) {
-          // Token is invalid or expired
           console.error("Failed to load user", err);
-          logout(); // Log them out
+          logout();
         }
       } else {
         localStorage.removeItem("token");
         delete api.defaults.headers.common["Authorization"];
         setUser(null);
       }
-      setLoading(false); // We are done loading
+      setLoading(false);
     };
 
     loadUser();
-  }, [token]); // This effect runs whenever the token changes
+  }, [token]);
 
   const login = (userData, userToken) => {
-    setUser(userData); // Set user immediately
-    setToken(userToken); // This will trigger the useEffect to save/load
+    // Save to localStorage immediately
+    localStorage.setItem("token", userToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    
+    // Update state
+    setUser(userData);
+    setToken(userToken);
+    
+    // Set axios header immediately
+    api.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
   };
 
   const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    delete api.defaults.headers.common["Authorization"];
     setUser(null);
     setToken(null);
   };
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading, api }}>
-      {/* Don't render children until we know if user is logged in */}
       {!loading && children}
     </AuthContext.Provider>
   );
