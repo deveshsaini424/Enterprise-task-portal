@@ -1,5 +1,3 @@
-Enterprise Task & Project Management Portal
-
 A full-stack web application designed for teams within an organization to manage projects, assign tasks, track progress, and communicate efficiently. Built with the MERN stack (MongoDB, Express.js, React, Node.js) and featuring real-time updates with Socket.io.
 
 ✨ Key Features
@@ -50,8 +48,8 @@ Steps:
 
 Clone the Repository:
 
-git clone <your-repo-url>
-cd <your-repo-name>
+git clone 
+cd 
 
 
 Backend Setup:
@@ -127,15 +125,3 @@ http://localhost:8080/auth/google (for local backend handling)
 Copy the Client ID and Client Secret into your .env files.
 
 (Optional: Add sections for API Endpoints, Screenshots, etc. here later)
-
-
----
-
-### **Step 4: Commit and Push**
-
-Once you have organized the folders and updated the `.gitignore` and `README.md`, commit these changes to your GitHub repository:
-
-```bash
-git add .
-git commit -m "Organize project into frontend and backend folders"
-git push origin main # Or your default branch name
